@@ -62,4 +62,4 @@ def assign(value, reg):
 		(or, arg1 and arg2 is imm)
 
 128: push (128, 0, 0, jump line)
-129: pop (129, 0, 0, 0)
+129: pop (192, 0, 0, 0)
