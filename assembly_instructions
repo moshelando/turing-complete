@@ -1,0 +1,133 @@
+busses:
+	lin.instr			dark green
+	lin.val-a_ctrl		white
+	lin.val-b_ctrl		orange
+	lin.rslt_ctrl		pink
+	lin.val-a			blue
+	lin.val-b			light blue
+	lin.rslt			light green
+	
+
+program:
+	(1): instr
+	(2): val-a_ctrl
+	(3): val-b_ctrl
+	(4): rslt_ctrl
+
+
+instr:
+	[1]: val-a imm
+	[2]: val:b imm
+	[4] - [64]:
+		math
+			[4] - [64]
+				0 add
+				4 sub
+				8 and
+				12 or
+				16 not (of val.a)
+				20 xor
+				24 shift left (a)
+				28 shift right (a)	
+		logic
+			[4] - [8]
+				4: is / !
+				8: = / >
+					0 is =
+					4 ! =
+					8 <
+					12 ! <
+			b[64]
+				0 write to program counter
+				64 write to logic output
+	128: math / logic
+		0 math
+		128 logic
+
+
+registers
+		0 - 7: registers
+		8: input
+		9: outpt
+		10: program counter
+		11: ram counter
+		12: ram	
+		13: logic output
+		14: stack
+		
+
+ASSEMBLY
+copy reg-a to reg-b
+	12 a 63 b
+
+jump to code-b
+	128 63 63 b
+	
+write imm-a to reg-b
+	13 a 63 b
+	
+if reg-a == imm-b, jump code-c
+	130 a b c
+
+
+
+add to stack current prog + 8
+	2 10 8 14
+		wrts1 wrts2 wrts3 wrts4
+
+jump to stack
+	12 14 63 10
+		esr1 esr2 esr3 esr4
+	
+INSTR
+
+add: 			0
+
+add_im: 		2
+
+sub:			4
+
+sub_im:			6
+
+and_im:			10
+	
+copy: 			12
+
+or:				12
+
+or_im:			14
+
+write: 			13
+
+shr:			28
+
+if_is: 			128
+
+if_is_im: 		130
+
+if_n_is: 		132
+
+if_n_is_im:		134
+
+if_less: 		136
+
+if_less_im:		138
+
+if_n_less: 		140
+
+if_n_less_imm: 	142
+
+_: 				63
+
+jump: 			128
+
+wrts1: 2; wrts2: 10; wrts3: 8; wrt4: 14
+esr1: 12; esr2: 14; esr3: 63; esr4: 10
+
+REG
+reg0 - reg7: 0 - 7
+inpt: 8
+oupt: 9
+ram_counter: 11
+ram: 12
+stack: 14
