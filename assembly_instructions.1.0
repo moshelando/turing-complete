@@ -1,0 +1,65 @@
+1st byte: opcode
+2nd byte: 1st argument
+3rd byte: 2nd argument
+4th byte: result destination / jump address
+
+blue = opcode
+white = first argument (instruction AND value)
+orange = second argument (instruction AND value)
+pink = destination (instruction AND value)
+green = clock (instruction AND value)
+
+opcode:
+math (byte 4 = result)
+	0: add
+	1: sub
+	2: and
+	3: or
+	4: not (of 1st argument)
+	5: xor
+	
+logic (byte 4 = jump address)
+	8: if =
+	9: if ! =
+	10: if <
+	11: if <=
+	12: if >
+	13: if >=
+
+	32: if bit 7: argument 1 is imm, not address
+	64: if bit 8: argument 2 is imm, not address
+	
+	128: push
+	192: pop
+
+		
+
+locations:
+	0 - 5: registers
+	6: program count
+	7: inpt-outpt
+	8: ram counter
+	9: ram
+
+	10: instruction register
+		1: inpt -> ram
+		2: ram -> outdsds
+
+
+def copy(reg_a, reg_b):
+	67, reg_a, 0, reg_b
+		(assign reg_a or 0 to reg_b)
+		(opcode: or; arg 2 is imm)
+
+def jump(label):
+	104, 0, 0, label
+		(if 0 = 0, assign label to counter)
+		(opcode: if=, arg1 and arg2 is imm
+
+def assign(value, reg):
+	99, value, 0, reg
+		(assign value or 0 to reg)
+		(or, arg1 and arg2 is imm)
+
+128: push (128, 0, 0, jump line)
+129: pop (129, 0, 0, 0)
