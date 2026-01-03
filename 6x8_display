@@ -1,0 +1,81 @@
+TURING COMPLETE
+
+6 X 8 DISPLAY
+
+SERIAL CONTROL MODULE
+
+
+
+Overview:
+
+	The purpose of this module is to provide a serial interface for the 6x8 matrix display.
+	This way, the processor can send all instruction data over a single line.
+	The module assembles the serial data and feeds it to the display.
+
+
+
+Directions:
+
+	Contolling the display is split into two instruction types:
+	The pixel data packet;
+	And the display refresh command.
+
+	Sending the pixel data packet will not immediately update the display.
+	The display will only update once a seperate refresh command is sent.
+
+	The pixel data packet has 12 bytes.
+	The first byte is the packet identifier.
+	The remaining 11 are the pixel data instructions.
+
+	The packet identifier for pixel data is 0x10.
+	This tells the module that the next 11 bytes will be the pixel data instructions.
+
+	The 11 pixel data bytes are ordered as follows:
+		1: Display column-select.
+		2: Display row-select.
+		3 - 5: RGB value.
+		The module's serial interface is configured for most significant byte first.
+		This means that the highest-value byte in the total assembled value is sent first.
+		So, for an RGB value, first R is sent, then G, then B.
+		6 - 11: Pixel value.
+		Similar to RGB, the pixel data is sent most significant byte first.
+
+	Numerous instruction packets can be sent prior to refreshing the display.
+
+	To refresh the display, simply send 0x11.
+
+
+
+Example:
+
+	The following instructions set:
+	The top left quarter red,
+	The top right green,
+	Refreshes,
+	Then sets the bottom left blue,
+	And bottom right black.
+
+
+		16 # pixel data packet identifier
+		15 15 # first four columns, first four rows
+		255 0 0 # red
+		255 255 255 255 255 255 # all pixels in the selected displays
+
+		16
+		240 15
+		0 255 0
+		255 255 255 255 255 255
+
+		17
+
+		16
+		15 240
+		0 0 255
+		255 255 255 255 255 255
+
+		16
+		240 240
+		0 0 0
+		255 255 255 255 255 255
+
+		17
