@@ -1,0 +1,185 @@
+wrts1 wrts2 wrts3 wrts4
+jump _ _ init
+wrts1 wrts2 wrts3 wrts4
+jump _ _ val_byte
+wrts1 wrts2 wrts3 wrts4
+jump _ _ digit_bits
+jump _ _ end
+
+label init
+	write 216 _ reg0
+	write 0 _ reg1
+	write 0 _ reg2
+	write 0 _ reg3
+	write 0 _ reg4
+	write 0 _ reg5
+	write 0 _ reg6
+	write 0 _ reg7
+	esr1 esr2 esr3 esr4
+
+label val_byte
+	#reg2 counts bits of the value byte
+	add_im reg2 1 reg2
+	wrts1 wrts2 wrts3 wrts4
+	jump _ _ bit_test
+	shr reg0 _ reg0
+	if_less_im reg2 16 val_byte
+	esr1 esr2 esr3 esr4
+
+label bit_test
+	and_im reg0 1 reg1
+	if_is_im reg1 1 bit_on
+	esr1 esr2 esr3 esr4
+
+label bit_on
+	if_is_im reg2 1 on1
+	if_is_im reg2 2 on2
+	if_is_im reg2 3 on4
+	if_is_im reg2 4 on8
+	if_is_im reg2 5 on16
+	if_is_im reg2 6 on32
+	if_is_im reg2 7 on64
+	if_is_im reg2 8 on128
+	if_is_im reg2 9 on256
+	if_is_im reg2 10 on512
+	if_is_im reg2 11 on1024
+	if_is_im reg2 12 on2048
+	if_is_im reg2 13 on4096
+	if_is_im reg2 14 on8192
+	if_is_im reg2 15 on16384
+	if_is_im reg2 16 on32768
+
+label on1
+	add_im reg3 1 reg3
+	esr1 esr2 esr3 esr4
+
+label on2
+	add_im reg3 2 reg3
+	esr1 esr2 esr3 esr4
+
+label on4
+	add_im reg3 4 reg3
+	esr1 esr2 esr3 esr4
+
+label on8
+	add_im reg3 8 reg3
+	esr1 esr2 esr3 esr4
+
+label on16
+	add_im reg3 6 reg3
+	add_im reg4 1 reg4
+	esr1 esr2 esr3 esr4
+
+label on32
+	add_im reg3 2 reg3
+	add_im reg4 3 reg4
+	esr1 esr2 esr3 esr4
+
+label on64
+	add_im reg3 4 reg3
+	add_im reg4 6 reg4
+	esr1 esr2 esr3 esr4
+
+label on128
+	add_im reg3 8 reg3
+	add_im reg4 2 reg4
+	add_im reg5 1 reg5
+	esr1 esr2 esr3 esr4
+
+label on256
+	add_im reg3 6 reg3
+	add_im reg4 5 reg4
+	add_im reg5 2 reg5
+	esr1 esr2 esr3 esr4
+
+label on512
+	add_im reg3 2 reg3
+	add_im reg4 1 reg4
+	add_im reg5 5 reg5
+	esr1 esr2 esr3 esr4
+
+label on1024
+	add_im reg3 4 reg3
+	add_im reg4 2 reg4
+	add_im reg6 1 reg6
+	esr1 esr2 esr3 esr4
+
+label on2048
+	add_im reg3 8 reg3
+	add_im reg4 4 reg4
+	add_im reg6 2 reg6
+	esr1 esr2 esr3 esr4
+
+label on4096
+	add_im reg3 6 reg3
+	add_im reg4 9 reg4
+	add_im reg6 4 reg6
+	esr1 esr2 esr3 esr4
+
+label on8192
+	add_im reg3 2 reg3
+	add_im reg4 9 reg4
+	add_im reg5 1 reg5
+	add_im reg6 8 reg6
+	esr1 esr2 esr3 esr4
+
+label on16384
+	add_im reg3 4 reg3
+	add_im reg4 8 reg4
+	add_im reg5 3 reg5
+	add_im reg6 6 reg6
+	add_im reg7 1 reg7
+	esr1 esr2 esr3 esr4
+
+label on32768
+	add_im reg3 8 reg3
+	add_im reg4 6 reg4
+	add_im reg5 7 reg5
+	add_im reg6 2 reg6
+	add_im reg7 3 reg7
+	esr1 esr2 esr3 esr4
+
+label digit_bits
+	copy reg3 _ reg0
+	write 0 _ reg3
+	write 0 _ reg2
+	wrts1 wrts2 wrts3 wrts4
+	jump _ _ digit
+	wrts1 wrts2 wrts3 wrts4
+	jump _ _ write_out
+	copy reg4 _ reg3
+	copy reg5 _ reg4
+	copy reg6 _ reg5
+	copy reg7 _ reg6
+	write 0 _ reg7
+	write 0 _ ram_counter
+	add_im ram 1 ram
+	write 0 _ ram_counter
+	if_less_im ram 5 digit_bits
+	esr1 esr2 esr3 esr4
+	
+label digit
+	add_im reg2 1 reg2
+	wrts1 wrts2 wrts3 wrts4
+	jump _ _ bit_test
+	shr reg0 _ reg0
+	if_less_im reg2 8 digit
+	if_n_less_im reg3 10 overflow
+	esr1 esr2 esr3 esr4
+
+label overflow
+	sub_im reg3 10 reg3
+	add_im reg4 1 reg4
+	copy reg3 _ reg0
+	esr1 esr2 esr3 esr4
+	
+label write_out
+	write 0 _ ram_counter
+	copy ram _ reg1
+	write 16 _ ram_counter
+	add ram_counter reg1 ram_counter
+	copy reg3 _ ram
+	esr1 esr2 esr3 esr4
+	
+label end
+	jump _ _ end
